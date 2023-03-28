@@ -27,7 +27,7 @@ class WP_CLI_MU_Orphan_Tables {
 		$db_name = DB_NAME;
 		$prefix  = $wpdb->base_prefix;
 
-		$existing_blog_ids = $wpdb->get_col( sprintf( "SELECT blog_id FROM %s", $wpdb->blogs ) );
+		$existing_blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
 
 		if ( empty( $existing_blog_ids ) ) {
 			WP_CLI::warning( 'No table found.' );
@@ -42,15 +42,18 @@ class WP_CLI_MU_Orphan_Tables {
 		 * then it's a real blog in the network
 		 */
 		foreach ( $existing_blog_ids as $existing_blog_id ) {
-			$exclude_sql[] = "`Tables_in_$db_name` NOT LIKE '%$prefix\_" . $existing_blog_id . "\_%'";
+			$exclude_sql[] = "`tables_in_$db_name` NOT LIKE '$prefix" . $existing_blog_id . "\_%'";
 		}
+
+		// Keep only tables with prefix
+		$exclude_sql[] = "`tables_in_$db_name` REGEXP '{$prefix}[0-9]+'";
 
 		/**
 		 * There is no use listing main tables from
 		 * main blog and multisite tables
 		 */
 		foreach ( $this->get_default_tables() as $t ) {
-			$exclude_sql[] = "`Tables_in_$db_name` != '$t'";
+			$exclude_sql[] = "`tables_in_$db_name` != '$t'";
 		}
 
 		$tables_to_drop = $wpdb->get_col( "SHOW TABLES 
@@ -110,6 +113,8 @@ class WP_CLI_MU_Orphan_Tables {
 
 		return array_map(
 			function ( $v ) {
+				global $wpdb;
+
 				$prefix = $wpdb->base_prefix;
 
 				return $prefix . $v;
