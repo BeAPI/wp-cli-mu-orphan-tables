@@ -1,5 +1,5 @@
 {
-  "name":"bea/wp-cli-mu-orphan-table",
+  "name":"beapi/wp-cli-mu-orphan-table",
   "description":"A WP-CLI command to list orphan tables from WordPress multisite installation.",
   "keywords":[
     "oprhan",
