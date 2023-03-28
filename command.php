@@ -1,47 +1,9 @@
 <?php
-/*
-Plugin Name: BEA - WP-CLI Orphan Tables
-Version: 0.1.0
-Plugin URI: https://github.com/BeAPI/wp-cli-mu-orphan-tables
-Description: A WP-CLI command to remove orphan tables from WordPress Multi-site.
-Author: Be API
-Author URI: https://beapi.fr
-Domain Path: languages
-Network: True
-
-----
-Copyright 2023 Be API (human@beapi.fr)
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
-
-namespace BEA\WP_CLI_Mu_Orphan_Table_List;
-
-use WP_CLI;
-
 if ( ! class_exists( 'WP_CLI' ) ) {
 	return;
 }
 
-class Command {
-
-	protected $db;
-
-	public function __construct() {
-		$this->db = $GLOBALS['wpdb'];
-	}
+class WP_CLI_MU_Orphan_Tables {
 
 	/**
 	 * Remove orphan tables from WordPress
@@ -55,6 +17,7 @@ class Command {
 	 *     $ wp orphan tables list
 	 */
 	public function __invoke() {
+		global $wpdb;
 
 		if ( ! is_multisite() ) {
 			WP_CLI::error( 'This is not a multisite installation. This command is for multisite only.' );
@@ -62,9 +25,9 @@ class Command {
 
 
 		$db_name = DB_NAME;
-		$prefix  = $this->db->base_prefix;
+		$prefix  = $wpdb->base_prefix;
 
-		$existing_blog_ids = $this->db->get_col( sprintf( "SELECT blog_id FROM %s", $this->db->blogs ) );
+		$existing_blog_ids = $wpdb->get_col( sprintf( "SELECT blog_id FROM %s", $wpdb->blogs ) );
 
 		if ( empty( $existing_blog_ids ) ) {
 			WP_CLI::warning( 'No table found.' );
@@ -90,7 +53,7 @@ class Command {
 			$exclude_sql[] = "`Tables_in_$db_name` != '$t'";
 		}
 
-		$tables_to_drop = $this->db->get_col( "SHOW TABLES 
+		$tables_to_drop = $wpdb->get_col( "SHOW TABLES 
 			FROM `$db_name` 
 			WHERE 1 = 1
 			AND " . implode( " AND ", $exclude_sql ) );
@@ -122,6 +85,7 @@ class Command {
 	 * @return array
 	 */
 	protected function get_default_tables() {
+		global $wpdb;
 
 		$defaults = [
 			'commentmeta',
@@ -146,7 +110,7 @@ class Command {
 
 		return array_map(
 			function ( $v ) {
-				$prefix = $this->db->base_prefix;
+				$prefix = $wpdb->base_prefix;
 
 				return $prefix . $v;
 			},
@@ -155,5 +119,4 @@ class Command {
 	}
 }
 
-$instance = new Command;
-WP_CLI::add_command( 'orphan tables list', $instance );
+WP_CLI::add_command( 'orphan tables list', 'WP_CLI_MU_Orphan_Tables' );
