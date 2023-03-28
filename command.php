@@ -10,7 +10,7 @@ Domain Path: languages
 Network: True
 
 ----
-Copyright 2018 Be API (human@beapi.fr)
+Copyright 2023 Be API (human@beapi.fr)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
