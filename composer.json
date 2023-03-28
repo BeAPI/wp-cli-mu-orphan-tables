@@ -1,24 +1,20 @@
 {
-  "name":"beapi/wp-cli-mu-orphan-table",
-  "description":"A WP-CLI command to list orphan tables from WordPress multisite installation.",
-  "keywords":[
-    "oprhan",
-    "sql",
-    "find",
-    "tables"
-  ],
-  "homepage":"https://github.com/BeAPI/wp-cli-mu-orphan-table",
-  "authors":[
+  "name": "beapi/wp-cli-mu-orphan-tables",
+  "description": "A WP-CLI command to list orphan tables from WordPress multisite installation.",
+  "type": "wp-cli-package",
+  "homepage": "https://github.com/BeAPI/wp-cli-mu-orphan-tables",
+  "license": "MIT",
+  "require": {
+    "php": ">=5.6"
+  },
+  "authors": [
     {
-      "name":"Be API",
-      "email":"technique@beapi.fr",
-      "homepage":"https://beapi.fr/"
+      "name": "Amaury Balmer",
+      "email": "amaury@beapi.fr"
     }
   ],
-  "type": "wp-cli-package",
-  "minimum-stability":"stable",
-  "license":"GPL-3.0+",
-  "require":{
-    "php":">=5.6.0"
+  "minimum-stability": "dev",
+  "autoload": {
+    "files": [ "command.php" ]
   }
 }
